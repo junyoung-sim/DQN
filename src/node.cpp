@@ -4,17 +4,6 @@
 
 #include "../lib/node.hpp"
 
-Node::Node(unsigned int in) {
-    init();
-    b = 0.00;
-    for(unsigned int i = 0; i < in; i++)
-        w.push_back(0.00);
-}
-
-Node::~Node() {
-    std::vector<double>().swap(w);
-}
-
 double Node::bias() {
     return b;
 }

@@ -6,15 +6,22 @@
 class Node
 {
 private:
-    double b;
-    double s;
-    double z;
-    double e;
+    double b; // bias
+    double s; // sum
+    double z; // activation
+    double e; // error
     std::vector<double> w;
 public:
-    Node(){}
-    Node(unsigned int in);
-    ~Node();
+    Node() {}
+    Node(unsigned int in) {
+        init();
+        b = 0.00;
+        for(unsigned int i = 0; i < in; i++)
+            w.push_back(0.00);
+    }
+    ~Node() {
+        std::vector<double>().swap(w);
+    }
 
     double bias();
     double sum();

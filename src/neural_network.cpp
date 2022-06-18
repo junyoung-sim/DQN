@@ -17,10 +17,6 @@ double relu_prime(double x) {
 
 // --- //
 
-NeuralNetwork::~NeuralNetwork() {
-    std::vector<Layer>().swap(layers);
-}
-
 void NeuralNetwork::add_layer(unsigned int in, unsigned int out) {
     layers.push_back(Layer(in, out));
 }
@@ -36,6 +32,10 @@ void NeuralNetwork::initialize(std::default_random_engine &seed) {
     }
 }
 
+unsigned int NeuralNetwork::num_of_layers() {
+    return layers.size();
+}
+
 Layer *NeuralNetwork::layer(unsigned int index) {
     return &layers[index];
 }
@@ -45,7 +45,7 @@ std::vector<double> NeuralNetwork::predict(std::vector<double> &x) {
     // fully-connected feedforward
     for(unsigned int l = 0; l < layers.size(); l++) {
         for(unsigned int n = 0; n < layers[l].out_features(); n++) {
-           double matmul = 0.00;
+            double matmul = 0.00;
             for(unsigned int i = 0; i < layers[l].in_features(); i++) {
                 if(l == 0)
                     matmul += x[i] * layers[l].node(n)->weight(i);

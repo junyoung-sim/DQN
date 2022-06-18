@@ -20,11 +20,14 @@ private:
     std::vector<Layer> layers;
 public:
     NeuralNetwork() {}
-    ~NeuralNetwork();
+    ~NeuralNetwork() {
+        std::vector<Layer>().swap(layers);
+    }
 
     void add_layer(unsigned int in, unsigned int out);
     void initialize(std::default_random_engine &seed);
 
+    unsigned int num_of_layers();
     Layer *layer(unsigned int index);
 
     std::vector<double> predict(std::vector<double> &x);

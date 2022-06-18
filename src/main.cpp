@@ -2,13 +2,13 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
-#include <random>
-#include <chrono>
+#include <fstream>
 
-#include "../lib/neural_network.hpp"
+#include "../lib/dqn.hpp"
 
 int main(int argc, char *argv[])
 {
+/*
     NeuralNetwork model;
 
     model.add_layer(5, 10);
@@ -24,6 +24,13 @@ int main(int argc, char *argv[])
 
     for(double &val: yhat)
         std::cout << val << " ";
+*/
+
+    std::vector<std::vector<double>> state, reward;
+
+    // read state and reward from ./data/residual and ./data/reward
+
+    DQN dqn({{15,10},{10,5},{5,3}});
 
     return 0;
 }
