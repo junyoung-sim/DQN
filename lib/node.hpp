@@ -16,8 +16,7 @@ public:
     Node(unsigned int in) {
         init();
         b = 0.00;
-        for(unsigned int i = 0; i < in; i++)
-            w.push_back(0.00);
+        w = std::vector<double>(in, 0.00);
     }
     ~Node() {
         std::vector<double>().swap(w);

@@ -5,6 +5,7 @@
 #include <random>
 #include <cmath>
 
+#include <iostream>
 #include "../lib/neural_network.hpp"
 
 double relu(double x) {

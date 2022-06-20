@@ -15,8 +15,7 @@ private:
 public:
     Layer() {}
     Layer(unsigned int _in, unsigned int _out): in(_in), out(_out) {
-        for(unsigned int i = 0; i < out; i++)
-            n.push_back(Node(in));
+        n = std::vector<Node>(out, Node(in));
     }
     ~Layer() {
         std::vector<Node>().swap(n);

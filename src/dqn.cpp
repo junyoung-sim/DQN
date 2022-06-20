@@ -1,6 +1,9 @@
 
 #include <cstdlib>
 #include <vector>
+#include <cmath>
+
+#include <iostream>
 
 #include "../lib/dqn.hpp"
 
@@ -22,9 +25,8 @@ void DQN::train(std::vector<std::vector<double>> &state, std::vector<std::vector
     // replay memory
     unsigned int memory_size = 0;
     std::vector<unsigned int> action_memory;
-    std::vector<double> reward_memory;
 
-    for(unsigned int t = 0; t < state.size() - 1; t++) {
+    for(unsigned int t = 0; t < state.size(); t++) {
         unsigned int action_t;
         double explore = (double)rand() / RAND_MAX;
         // e-greedy policy
@@ -38,21 +40,37 @@ void DQN::train(std::vector<std::vector<double>> &state, std::vector<std::vector
         }
 
         action_memory.push_back(action_t);
-        reward_memory.push_back(reward[t][action_t]);
         memory_size++;
-/*
-        // learning phase
-        if(memory_size >= BATCH_SIZE * 2) {
-            std::vector<unsigned int> batch_index;
-            for(unsigned int k = 0; k < BATCH_SIZE; k++) {
-                unsigned int index;
-                while(std::find(batch_index.begin(), batch_index.end(), index) == batch_index.end())
-                    index = rand() % memory_size;
 
-                std::vector<double> target_q = target.predict(state[index+1]);
-                double y = reward_memory[index] + GAMMA * (*std::max_element(target_q.begin(), target_q.end()));
+        // learning
+        if(memory_size >= BATCH_SIZE * 2) {
+            std::vector<unsigned int> batch_index(memory_size, 0);
+            std::iota(batch_index.begin(), batch_index.end(), 0);
+            std::shuffle(batch_index.begin(), batch_index.end(), seed);
+
+            for(unsigned int k = 0; k < BATCH_SIZE; k++) {
+                double expected_reward, loss;
+                double partial_gradient, gradient;
+                unsigned int index = batch_index[k];
+
+                // sample transition
+                std::vector<double> agent_q = agent.predict(state[index]);
+                if(index != memory_size - 1) {
+                    std::vector<double> target_q = target.predict(state[index+1]);
+                    expected_reward = reward[index][action_memory[index]] + GAMMA * (*std::max_element(target_q.begin(), target_q.end()));
+
+                    std::vector<double>().swap(target_q);
+                }
+                else
+                    expected_reward = reward[index][action_memory[index]];
+
+                // SGD
+                loss = expected_reward - agent_q[action_memory[index]];
             }
+
+            std::vector<unsigned int>().swap(batch_index);
         }
-*/
+
     }
 }
+

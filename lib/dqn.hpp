@@ -13,6 +13,7 @@ class DQN
 private:
     NeuralNetwork agent;
     NeuralNetwork target;
+    std::default_random_engine seed;
 public:
     DQN() {}
     DQN(std::vector<std::vector<unsigned int>> shape) {
@@ -21,9 +22,7 @@ public:
             target.add_layer(shape[l][0], shape[l][1]);
         }
 
-        std::default_random_engine seed;
         seed.seed(std::chrono::system_clock::now().time_since_epoch().count());
-
         agent.initialize(seed);
         synchronize();
     }

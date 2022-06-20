@@ -2,35 +2,43 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <string>
 #include <fstream>
 
 #include "../lib/dqn.hpp"
 
+std::vector<std::vector<double>> read(std::string path) {
+    std::ifstream file(path);
+    std::vector<std::vector<double>> dat;
+
+    if(file.is_open()) {
+        std::string line;
+        while(std::getline(file, line)) {
+            std::vector<double> row;
+            unsigned int start = 0;
+            for(unsigned int i = 0; i < line.length(); i++) {
+                if(line[i] == ' ' || i == line.length() - 1) {
+                    row.push_back(std::stod(line.substr(start, i - start)));
+                    start = i + 1;
+                }
+            }
+            dat.push_back(row);
+            std::vector<double>().swap(row);
+        }
+
+        file.close();
+    }
+
+    return dat;
+}
+
 int main(int argc, char *argv[])
 {
-/*
-    NeuralNetwork model;
-
-    model.add_layer(5, 10);
-    model.add_layer(10, 10);
-    model.add_layer(10, 3);
-
-    std::default_random_engine seed;
-    seed.seed(std::chrono::system_clock::now().time_since_epoch().count());
-    model.initialize(seed);
-
-    std::vector<double> test_x = {0.1, 0.3, -0.5, -0.9, 0.2};
-    std::vector<double> yhat = model.predict(test_x);
-
-    for(double &val: yhat)
-        std::cout << val << " ";
-*/
-
-    std::vector<std::vector<double>> state, reward;
-
-    // read state and reward from ./data/residual and ./data/reward
+    std::vector<std::vector<double>> state = read("./data/residual");
+    std::vector<std::vector<double>> reward = read("./data/reward");
 
     DQN dqn({{15,10},{10,5},{5,3}});
+    dqn.train(state, reward);
 
     return 0;
 }
