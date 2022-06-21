@@ -30,8 +30,8 @@ void Node::init() {
     e = 0.00;
 }
 
-void Node::update_bias(double gradient) {
-    b -= gradient;
+void Node::set_bias(double val) {
+    b = val;
 }
 
 void Node::set_sum(double val) {

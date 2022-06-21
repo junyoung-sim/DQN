@@ -5,7 +5,6 @@
 #include <random>
 #include <cmath>
 
-#include <iostream>
 #include "../lib/neural_network.hpp"
 
 double relu(double x) {
@@ -57,10 +56,10 @@ std::vector<double> NeuralNetwork::predict(std::vector<double> &x) {
             layers[l].node(n)->init();
             layers[l].node(n)->set_sum(matmul + layers[l].node(n)->bias());
 
-            if(l != layers.size() - 1)
-                layers[l].node(n)->set_act(relu(layers[l].node(n)->sum())); // hidden layer (relu)
-            else
+            if(l == layers.size() - 1)
                 yhat.push_back(layers[l].node(n)->sum()); // output layer (linear q-values)
+            else
+                layers[l].node(n)->set_act(relu(layers[l].node(n)->sum())); // hidden layer (relu)
         }
     }
 

@@ -29,7 +29,7 @@ public:
     double weight(unsigned int index);
 
     void init();
-    void update_bias(double gradient);
+    void set_bias(double val);
     void set_sum(double val);
     void set_act(double val);
     void add_err(double val);
