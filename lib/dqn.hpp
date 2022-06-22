@@ -29,7 +29,11 @@ public:
 
     void synchronize();
 
-    void train(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward);
+    void train(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward,
+               unsigned int EPOCH, unsigned int ITERATION, unsigned int BATCH_SIZE, double ALPHA, double ALPHA_DECAY,
+               double EPSILON, double EPSILON_DECAY, double GAMMA, unsigned int SYNC_FREQEUCNY);
+    void fit(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward,
+             unsigned int ITERATION, unsigned int BATCH_SIZE, double ALPHA, double EPSILON, double GAMMA, unsigned int SYNC_FREQUENCY);
 };
 
 #endif

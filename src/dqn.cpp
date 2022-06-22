@@ -17,16 +17,26 @@ void DQN::synchronize() {
     }
 }
 
-void DQN::train(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward) {
-    double EPSILON = 0.05;
-    double GAMMA = 0.90;
-    double ALPHA = 0.001;
-    unsigned int SYNCHRONIZATION = 10;
+void DQN::train(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward,
+            unsigned int EPOCH, unsigned int ITERATION, unsigned int BATCH_SIZE, double ALPHA, double ALPHA_DECAY,
+            double EPSILON, double EPSILON_DECAY, double GAMMA, unsigned int SYNC_FREQUENCY) {
+    for(unsigned int e = 0; e < EPOCH; e++) {
+        ALPHA *= ALPHA_DECAY;
+        EPSILON *= EPSILON_DECAY;
 
-    unsigned int DATASET_SIZE = state.size();
-    unsigned int BATCH_SIZE = 100;
-    unsigned int ITERATION = 100;
+        fit(state, reward, ITERATION, BATCH_SIZE, ALPHA, EPSILON, GAMMA, SYNC_FREQUENCY);
 
+        // calculate average loss
+        double mean_loss = 0.00, mean_reward = 0.00;
+        for(unsigned int i = 0; i < state.size(); i++) {
+        
+        }
+        // calculate average reward
+    }
+}
+
+void DQN::fit(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward,
+              unsigned int ITERATION, unsigned int BATCH_SIZE, double ALPHA, double EPSILON, double GAMMA, unsigned int SYNC_FREQUENCY) {
     unsigned int memory_size = 0;
     std::vector<unsigned int> action_memory;
 
@@ -54,18 +64,16 @@ void DQN::train(std::vector<std::vector<double>> &state, std::vector<std::vector
             batch_index.erase(batch_index.begin() + BATCH_SIZE, batch_index.end());
 
             for(unsigned int itr = 1; itr <= ITERATION; itr++) {
-                std::vector<double> expected_reward;
                 for(unsigned int k = 0; k < BATCH_SIZE; k++) {
                     unsigned int index = batch_index[k];
                     // compute expected reward (finite bellman equation)
-                    double y = reward[index][action_memory[index]];
+                    double expected_reward = reward[index][action_memory[index]];
                     if(index != memory_size - 1) {
                         std::vector<double> target_q = target.predict(state[index+1]);
-                        y += GAMMA * (*std::max_element(target_q.begin(), target_q.end()));
+                        expected_reward += GAMMA * (*std::max_element(target_q.begin(), target_q.end()));
 
                         std::vector<double>().swap(target_q);
                     }
-                    expected_reward.push_back(y);
 
                     // SGD
                     std::vector<double> agent_q = agent.predict(state[index]);
@@ -80,7 +88,7 @@ void DQN::train(std::vector<std::vector<double>> &state, std::vector<std::vector
                         double partial_gradient = 0.00, gradient = 0.00;
                         for(unsigned int n = start; n < end; n++) {
                             if(l == agent.num_of_layers() - 1)
-                                partial_gradient = -2.00 * (y - agent_q[action_memory[index]]);
+                                partial_gradient = -2.00 * (expected_reward - agent_q[action_memory[index]]);
                             else {
                                 partial_gradient = agent.layer(l)->node(n)->err() * relu_prime(agent.layer(l)->node(n)->sum());
 
@@ -96,7 +104,7 @@ void DQN::train(std::vector<std::vector<double>> &state, std::vector<std::vector
                                 else
                                     gradient = partial_gradient * state[index][i];
 
-                                gradient += 1.00 / DATASET_SIZE * agent.layer(l)->node(n)->weight(i); // L2 regularization
+                                gradient += 1.00 / state.size() * agent.layer(l)->node(n)->weight(i); // L2 regularization
 
                                 double updated_weight = agent.layer(l)->node(n)->weight(i) - ALPHA * gradient;
                                 agent.layer(l)->node(n)->set_weight(i, updated_weight);
@@ -106,23 +114,11 @@ void DQN::train(std::vector<std::vector<double>> &state, std::vector<std::vector
                     std::vector<double>().swap(agent_q);
                 }
 
-                if(itr % SYNCHRONIZATION == 0)
+                if(itr % SYNC_FREQUENCY == 0)
                     synchronize();
-
-                double loss = 0.00;
-                for(unsigned int k = 0; k < BATCH_SIZE; k++) {
-                    unsigned int index = batch_index[k];
-                    std::vector<double> agent_q = agent.predict(state[index]);
-                    loss += pow(expected_reward[k] - agent_q[action_memory[index]], 2);
-
-                    std::vector<double>().swap(agent_q);
-                }
-                loss /= BATCH_SIZE;
-
-                std::vector<double>().swap(expected_reward);
-
-                progress_bar(itr, ITERATION, "LOSS = " + std::to_string(loss));
             }
+
+            std::vector<unsigned int>().swap(batch_index);
         }
     }
 }
