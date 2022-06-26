@@ -37,19 +37,18 @@ int main(int argc, char *argv[])
     std::vector<std::vector<double>> state = read("./data/residual");
     std::vector<std::vector<double>> reward = read("./data/reward");
 
-    DQN dqn({{15,10},{10,5},{5,3}});
+    DQN dqn({{30,18},{18,6},{6,3}});
 
-    unsigned int EPOCH = 100;
-    unsigned int ITERATION = 1000;
-    unsigned int BATCH_SIZE = 100;
+    unsigned int ITERATION = 10;
+    unsigned int BATCH_SIZE = 512;
     double ALPHA = 0.001;
-    double ALPHA_DECAY = 0.995;
-    double EPSILON = 0.05;
-    double EPSILON_DECAY = 0.995;
-    double GAMMA = 0.90;
-    unsigned int SYNC_FREQUENCY = 100;
+    double ALPHA_DECAY = 0.999;
+    double EPSILON = 0.90;
+    double EPSILON_DECAY = 0.999;
+    double GAMMA = 0.99;
+    unsigned int SYNC_FREQUENCY = 3000;
 
-    dqn.train(state, reward, EPOCH, ITERATION, BATCH_SIZE, ALPHA, ALPHA_DECAY, EPSILON, EPSILON_DECAY, GAMMA, SYNC_FREQUENCY);
+    dqn.optimize(state, reward, ITERATION, BATCH_SIZE, ALPHA, ALPHA_DECAY, EPSILON, EPSILON_DECAY, GAMMA, SYNC_FREQUENCY);
 
     return 0;
 }

@@ -7,10 +7,11 @@
 
 void progress_bar(unsigned int current, unsigned int total, std::string label) {
     std::string bar;
-    for(unsigned int i = 0; i < 30; i++) {
+    for(unsigned int i = 0; i < 50; i++) {
         if(i < label.length()) bar += label[i];
         else bar += " ";
     }
+
     bar += "[";
 
     unsigned int bar_width = 40;
