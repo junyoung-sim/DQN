@@ -38,17 +38,10 @@ int main(int argc, char *argv[])
     std::vector<std::vector<double>> reward = read("./data/reward");
 
     DQN dqn({{30,18},{18,12},{12,6},{6,3}});
+    dqn.optimize(state, reward);
 
-    unsigned int ITERATION = 10;
-    unsigned int BATCH_SIZE = 512;
-    double ALPHA = 0.001;
-    double ALPHA_DECAY = 0.999;
-    double EPSILON = 0.90;
-    double EPSILON_DECAY = 0.999;
-    double GAMMA = 0.99;
-    unsigned int SYNC_FREQUENCY = 1000;
-
-    dqn.optimize(state, reward, ITERATION, BATCH_SIZE, ALPHA, ALPHA_DECAY, EPSILON, EPSILON_DECAY, GAMMA, SYNC_FREQUENCY);
+    std::vector<std::vector<double>>().swap(state);
+    std::vector<std::vector<double>>().swap(reward);
 
     return 0;
 }

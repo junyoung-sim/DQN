@@ -4,7 +4,6 @@
 #include <vector>
 #include <random>
 #include <chrono>
-#include <string>
 
 #include "neural_network.hpp"
 
@@ -27,14 +26,12 @@ public:
         agent.initialize(seed);
         sync();
     }
-    ~DQN() {}
 
     void sync();
+    unsigned int select_action(std::vector<double> &state, double EPSILON);
 
-    std::vector<double> agent_performance(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward, double GAMMA);
-
-    void optimize(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward,
-                  unsigned int ITERATION, unsigned int BATCH_SIZE, double ALPHA, double ALPHA_DECAY, double EPSILON, double EPSILON_DECAY, double GAMMA, unsigned int SYNC_FREQUENCY);
+    std::vector<double> evaluate_agent(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward, double GAMMA);
+    void optimize(std::vector<std::vector<double>> &state, std::vector<std::vector<double>> &reward);
 };
 
 #endif
